@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ᴍᴇʀʙʏ.ᴅʟʟ</title>
+    <link href="https://fonts.cdnfonts.com/css/the-defiler" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-color: #050505;
+            --card-bg: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --accent-color: #ff3e3e;
+            --accent-glow: rgba(255, 62, 62, 0.15);
+            --accent-secondary: #7e00ff;
+            --border-color: #222;
+            --hover-color: #111;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Matrix-like background effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 35%, var(--accent-glow), transparent 25%),
+                radial-gradient(circle at 80% 10%, rgba(126, 0, 255, 0.08), transparent 25%);
+            opacity: 0.7;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(to right, rgba(30, 30, 30, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 30, 30, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px 15px;
+            position: relative;
+        }
+
+        /* Terminal-like top bar */
+        .terminal-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding: 10px 15px;
+            background-color: rgba(10, 10, 10, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .terminal-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--accent-color);
+            font-weight: 500;
+            text-shadow: 0 0 5px rgba(255, 62, 62, 0.5);
+        }
+
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #555;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #111;
+            position: relative;
+            z-index: 1;
+            box-shadow: 
+                0 0 0 2px var(--accent-color),
+                0 0 15px rgba(255, 62, 62, 0.5);
+        }
+
+        .avatar::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: conic-gradient(
+                var(--accent-color),
+                transparent,
+                var(--accent-color),
+                transparent,
+                var(--accent-color)
+            );
+            border-radius: 50%;
+            animation: rotate 8s linear infinite;
+            opacity: 0.7;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .username {
+            font-family: 'The Defiler', sans-serif;
+            font-size: 32px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            text-shadow: 0 0 8px rgba(255, 62, 62, 0.5);
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .username::before {
+            content: '>';
+            color: var(--accent-color);
+            margin-right: 5px;
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .description::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--accent-color), transparent);
+        }
+
+        .section-header {
+            font-family: 'The Defiler', sans-serif;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px 15px;
+            background-color: rgba(10, 10, 10, 0.95);
+            margin: 20px 0 12px 0;
+            border-left: 3px solid var(--accent-color);
+            border-radius: 2px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .section-header::before {
+            content: '#';
+            color: var(--accent-color);
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 12px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 10px;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .link-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 62, 62, 0.07), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .link-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+        }
+
+        .link-item:hover::before {
+            left: 100%;
+        }
+
+        .link-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0c0c0c;
+            border-radius: 6px;
+            border: 1px solid #222;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .link-item:hover .link-icon {
+            background: linear-gradient(135deg, rgba(255, 62, 62, 0.1), rgba(126, 0, 255, 0.1));
+            border-color: rgba(255, 62, 62, 0.3);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .link-text {
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .link-item:hover .link-text {
+            color: var(--accent-color);
+        }
+
+        .fame-item {
+            padding: 12px 15px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            position: relative;
+            text-decoration: none;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .fame-item:hover {
+            transform: translateX(5px);
+            border-left: 3px solid var(--accent-color);
+            padding-left: 18px;
+        }
+
+        /* Highlight special clans with subtle effects */
+        .fame-item:nth-child(3),
+        .fame-item:nth-child(6),
+        .fame-item:nth-child(9) {
+            border-left: 2px solid var(--accent-secondary);
+        }
+
+        .footer {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer:hover {
+            opacity: 0.7;
+        }
+
+        /* Add digital scan effect */
+        @keyframes scanline {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(to bottom,
+                transparent,
+                rgba(255, 62, 62, 0.1),
+                transparent);
+            animation: scanline 8s linear infinite;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #222;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        /* Page entry animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .container > *:nth-child(1) { animation-delay: 0.1s; }
+        .container > *:nth-child(2) { animation-delay: 0.15s; }
+        .container > *:nth-child(3) { animation-delay: 0.2s; }
+        .container > *:nth-child(4) { animation-delay: 0.25s; }
+        .container > *:nth-child(5) { animation-delay: 0.3s; }
+        .container > *:nth-child(6) { animation-delay: 0.35s; }
+        .container > *:nth-child(n+7) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    <div class="container">
+        <div class="terminal-bar">
+            <div class="terminal-buttons">
+                <div class="terminal-button"></div>
+                <div class="terminal-button"></div>
+                <div class="terminal-button"></div>
+            </div>
+            <div class="terminal-title">ᴍᴇʀʙʏ.ᴅʟʟ</div>
+        </div>
+
+        <div class="profile-header">
+            <div class="avatar-container">
+                <div class="avatar">
+                    <img src="https://cdn.bio.link/uploads/profile_pictures/2024-08-06/9ts4AkbzwggwJ6NZdRkEdBpXop1Cvrzh.png" alt="Avatar">
+                </div>
+            </div>
+            <div class="username">merby</div>
+            <div class="description">𝙢𝙚𝙧𝙗𝙮 𝙖𝙠𝙖 𝙤𝙥𝙩𝙞𝙢𝙞𝙨𝙢𝙜𝙚𝙣𝙚𝙧𝙖𝙩𝙤𝙧</div>
+        </div>
+
+        <div class="section-header">My Clans</div>
+        
+        <a href="https://discord.com/invite/BhCmBqD5ST" class="link-item">
+            <div class="link-text">Owner - PLUG | CLXN</div>
+        </a>
+        
+        <div class="section-header">My Social Links</div>
+        
+        <a href="https://t.me/merbygod" class="link-item">
+            <div class="link-text">My Telegram Channel</div>
+        </a>
+        
+        <a href="https://t.me/PerehodnikPLUG" class="link-item">
+            <div class="link-text">Periodicals | PLUS CLXN</div>
+        </a>
+        
+        <a href="https://discord-tracker.com/merby/" class="link-item">
+            <div class="link-text">Discord Tracker</div>
+        </a>
+        
+        <div class="section-header">Fame</div>
+        
+        <a href="https://discord.com/invite/b33KwVAPka" class="fame-item">Fame - Social Damage</a>
+        <a href="https://discord.com/invite/bkclxn" class="fame-item">Fame - 8K CLXN</a>
+        <a href="https://discord.com/invite/kyAGgGjAZG" class="fame-item">Fame - Беспорядочные</a>
+        <a href="https://discord.com/invite/xardston" class="fame-item">Fame - Xamdean</a>
+        <a href="https://discord.com/invite/bVaGr5hT4p" class="fame-item">Fame - Чаяблюет</a>
+        <a href="https://discord.com/invite/syndicatsquad" class="fame-item">Fame - Dark Syndicate</a>
+        <a href="https://discord.com/invite/augiri" class="fame-item">Fame - AUGIRI</a>
+        <a href="https://discord.com/invite/jjbmMWVqTz" class="fame-item">Fame - Trystol's Family</a>
+        <a href="https://discord.com/invite/756JbBGyj3" class="fame-item">Fame - AstralTeam | GLOBAL</a>
+        <a href="https://discord.com/invite/XYgjw6x65G" class="fame-item">Fame - ATLANT</a>
+        <a href="https://discord.com/invite/vsemogyshi" class="fame-item">Fame - veemoyshN</a>
+        <a href="https://discord.com/invite/astralnoclxn" class="fame-item">Fame - Astralocxfun</a>
+        <a href="https://discord.com/invite/xYR9s7r5qB" class="fame-item">Fame - Sill CLXN | GLOBAL</a>
+        
+        <a href="https://discord.com/users/1176881785855021203" class="footer">
+            <h5>ᴅᴇᴠ ʙʏ ᴄʀᴜsᴀᴅᴇʀ</h5>
+        </a>
+    </div>
+</body>
+</html>
